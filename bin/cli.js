@@ -19,7 +19,7 @@ Usage: npx onevideo [command] [options]
 Commands
   install      Install the skill into Claude Code (default)
   desktop      Build onevideo.mcpb for Claude Desktop and open it (one click: press Install).
-               --zip builds onevideo.zip for claude.ai / Settings > Capabilities > Skills instead
+               --zip builds onevideo.skill / onevideo.zip for claude.ai / Settings > Capabilities > Skills instead
   uninstall    Remove the installed skill
   setup        pip-install the Python dependencies (playwright, numpy; --full adds scipy, kokoro-onnx)
   doctor       Check this machine (Python, FFmpeg, browser, fonts, voice)
@@ -109,9 +109,9 @@ function desktop() {
   const dir = path.resolve(val("--out") || path.join(os.homedir(), "Downloads"));
   fs.mkdirSync(dir, { recursive: true });
   if (flag("--zip")) {
-    const zip = path.join(dir, `${NAME}.zip`);
-    fs.writeFileSync(zip, buildZip(listFiles().map((f) => ({ ...f, rel: `${NAME}/${f.rel}` }))));
-    say(`  [ok] Skill zip: ${zip}`);
+    const data = buildZip(listFiles().map((f) => ({ ...f, rel: `${NAME}/${f.rel}` })));
+    for (const ext of ["skill", "zip"]) fs.writeFileSync(path.join(dir, `${NAME}.${ext}`), data);
+    say(`  [ok] Skill package: ${path.join(dir, NAME)}.skill (and .zip, same file)`);
     say("       claude.ai or Claude Desktop > Settings > Capabilities > Skills > Upload skill. Code execution must be on.");
     return;
   }

@@ -55,7 +55,7 @@ You can also paste this into Claude Code running **on your own machine** (termin
 
 ### claude.ai and other agents
 
-- claude.ai (web): `npx onevideo desktop --zip`, then Settings > Capabilities > Skills > Upload skill. Code execution has to be on.
+- claude.ai (web): download `onevideo.skill` from the release (or `npx onevideo desktop --zip`), then Settings > Capabilities > Skills > Upload skill. Code execution has to be on.
 - Codex, Gemini CLI, Cursor and more: `npx onevideo --agents`, or `npx skills add oneamitj/onevideo`.
 
 Remove with `npx onevideo uninstall` (npx install) or from the Extensions / Plugins menu.
