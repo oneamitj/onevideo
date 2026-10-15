@@ -1,0 +1,15 @@
+{
+  "title": "Untitled video",
+  "format": "landscape",
+  "fps": 30,
+  "lang": "en",
+  "scenes": [
+    {"id": "hook", "dur": 2.4, "energy": 0.4, "music": "build"},
+    {"id": "reveal", "dur": 3.6, "energy": 0.7, "transition": "dip"},
+    {"id": "point", "dur": 3.2, "energy": 0.8, "transition": {"type": "slide", "dur": 0.5}},
+    {"id": "cta", "dur": 4.0, "energy": 0.6, "transition": "fade"}
+  ],
+  "music": {"style": "uplifting", "seed": 1, "ending": "sting"},
+  "sfx": [],
+  "voice": {"engine": "auto", "lang": "en-us", "lines": []}
+}

@@ -1,0 +1,41 @@
+{
+  "name": "onevideo",
+  "version": "1.0.0",
+  "description": "Agent skill that turns a prompt into a finished short video, rendered locally with free tools. One command installs it for Claude Code and Claude Desktop.",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "claude-desktop",
+    "agent-skill",
+    "skill",
+    "video",
+    "ffmpeg",
+    "playwright",
+    "motion-graphics"
+  ],
+  "license": "MIT",
+  "author": "Amit Joshi <wannamit@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oneamitj/onevideo.git"
+  },
+  "homepage": "https://github.com/oneamitj/onevideo#readme",
+  "bugs": {
+    "url": "https://github.com/oneamitj/onevideo/issues"
+  },
+  "bin": {
+    "onevideo": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "references",
+    "scripts",
+    "assets"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

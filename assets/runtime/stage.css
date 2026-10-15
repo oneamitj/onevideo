@@ -1,0 +1,107 @@
+/* stage.css - base layer for onevideo compositions. MIT License.
+   Sizes come from CSS variables set by stage.js:
+     --W, --H        stage size in px (1920x1080, 1080x1920, ...)
+     --u             1% of the shorter side. Size type and spacing with it:
+                     font-size: calc(var(--u) * 8) reads the same in every format.
+     --sw, --sh      1% of stage width / height
+     --safe-t/r/b/l  safe-area insets for the current format and platform profile
+   Classes on <html>: fmt-landscape | fmt-vertical | fmt-square | fmt-portrait,
+   is-wide | is-tall | is-square, and dir="rtl" for right-to-left languages. */
+
+html, body { margin: 0; padding: 0; }
+body { background: #0b0b0c; overflow: hidden; }
+
+#stage {
+  position: relative;
+  overflow: hidden;
+  width: var(--W, 1920px);
+  height: var(--H, 1080px);
+  transform-origin: 0 0;
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  font-kerning: normal;
+}
+#stage *, #stage *::before, #stage *::after {
+  box-sizing: border-box;
+  /* time is driven by stage.js; CSS transitions would run on wall-clock time */
+  transition: none !important;
+}
+
+/* scenes stack on top of each other; stage.js toggles visibility */
+/* :where() keeps these at the specificity of a single class, so your own .scene / .cam rules win */
+:where(#stage) .scene { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+:where(#stage .scene) > .cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+
+/* layout helpers */
+.fill { position: absolute; inset: 0; }
+.safe { position: absolute; top: var(--safe-t); right: var(--safe-r); bottom: var(--safe-b); left: var(--safe-l); }
+/* .safe.sym: same inset on both sides (the larger one), so centred content looks centred
+   even when the platform UI is wider on one side (vertical social) */
+.safe.sym { left: max(var(--safe-l), var(--safe-r)); right: max(var(--safe-l), var(--safe-r)); }
+/* with burned-in captions the content area stops above a caption band */
+.has-captions .safe { bottom: calc(var(--safe-b) + var(--cap-band)); }
+.center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.stack { display: flex; flex-direction: column; }
+.row { display: flex; flex-direction: row; align-items: center; }
+
+/* split text units */
+.ptv-w, .ptv-c { display: inline-block; }
+.ptv-w { white-space: nowrap; }
+.ptv-ln { display: block; }
+.ptv-m { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.08em 0.02em 0.14em; margin: -0.08em -0.02em -0.14em; }
+.ptv-mline { display: block; }
+.ptv-u { display: inline-block; }
+.ptv-mline > .ptv-u { display: block; }
+.ptv-caret {
+  display: inline-block; width: 0.08em; height: 1em; margin-inline-start: 0.06em;
+  vertical-align: -0.12em; background: currentColor;
+}
+
+/* simulated cursor */
+.ptv-cursor { position: absolute; left: 0; top: 0; z-index: 999; pointer-events: none; transform-origin: 15% 10%; filter: drop-shadow(0 calc(var(--u) * 0.3) calc(var(--u) * 0.6) rgba(0,0,0,.35)); }
+.ptv-cursor svg { display: block; }
+.ptv-ripple {
+  position: absolute; left: 16%; top: 10%; width: 140%; height: 140%; border-radius: 50%;
+  border: calc(var(--u) * 0.35) solid rgba(255,255,255,.95); opacity: 0; transform: translate(-50%,-50%) scale(.2);
+}
+
+/* flash overlay for 'flash' transitions */
+.ptv-flash { position: absolute; inset: 0; z-index: 9000; opacity: 0; pointer-events: none; background: #fff; }
+
+/* burned-in captions (from voice.py) sit in their own band at the bottom of the safe area.
+   Restyle freely; keep scene text inside .safe so the two never collide. */
+.ptv-captions {
+  position: absolute; z-index: 8000; left: var(--safe-l); right: var(--safe-r);
+  bottom: var(--safe-b); height: var(--cap-band); display: flex; align-items: center; justify-content: center;
+  visibility: hidden; pointer-events: none;
+}
+.ptv-captions > span {
+  max-width: 88%; padding: calc(var(--u) * 0.7) calc(var(--u) * 1.4); border-radius: calc(var(--u) * 1);
+  background: rgba(10,10,12,.72); color: #fff; text-align: center;
+  font: 600 calc(var(--u) * 3.6)/1.25 var(--font-caption, system-ui, sans-serif);
+}
+.fmt-vertical .ptv-captions > span { font-size: calc(var(--u) * 5); }
+
+/* ---- preview only (never rendered) ---- */
+body.ptv-preview { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding-top: 16px; }
+body.ptv-preview #stage { box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+body.ptv-preview .stage-wrap, body.ptv-preview #stage { flex: none; }
+body.ptv-preview::before { content: ''; display: block; width: var(--fitW); height: var(--fitH); position: absolute; pointer-events: none; }
+.ptv-hud {
+  position: fixed; left: 16px; right: 16px; bottom: 12px; height: 44px; z-index: 99999;
+  display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 10px;
+  background: rgba(24,24,28,.92); color: #ddd; font: 13px/1 system-ui, sans-serif;
+}
+.ptv-hud button, .ptv-hud select { background: #33343a; color: #eee; border: 0; border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.ptv-time { font-variant-numeric: tabular-nums; min-width: 96px; }
+.ptv-bar { position: relative; flex: 1; height: 8px; border-radius: 4px; background: #3a3b42; cursor: pointer; }
+.ptv-fill { position: absolute; left: 0; top: 0; bottom: 0; background: #e8e8ea; border-radius: 4px; }
+.ptv-bar i { position: absolute; top: -4px; width: 2px; height: 16px; background: #8a8cff; }
+.ptv-safe-overlay {
+  position: absolute; z-index: 99998; pointer-events: none; display: none;
+  top: var(--safe-t); right: var(--safe-r); bottom: var(--safe-b); left: var(--safe-l);
+  outline: 2px dashed rgba(255, 60, 120, .9); box-shadow: 0 0 0 9999px rgba(255, 60, 120, .12);
+}
+.ptv-safe-overlay.on { display: block; }
+body.ptv-render .ptv-safe-overlay, body.ptv-render .ptv-hud { display: none !important; }

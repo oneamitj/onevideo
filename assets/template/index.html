@@ -1,0 +1,84 @@
+<!doctype html>
+<!-- Starter composition. Structure only: restyle and rewrite everything for the video at hand.
+     Every scene is a <section class="scene" id="..."> listed in timeline.json.
+     Size type and spacing with var(--u) (1% of the short side) so all formats work. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>video</title>
+<link rel="stylesheet" href="runtime/stage.css">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<style>
+  :root {
+    --bg: #0f1115;
+    --ink: #f5f2ea;
+    --muted: #a7a39a;
+    --accent: #ff6b3d;
+    --display: 'Inter', system-ui, sans-serif;
+    --body: 'Inter', system-ui, sans-serif;
+  }
+  .scene { background: var(--bg); color: var(--ink); font-family: var(--body); }
+  .kicker { font: 600 calc(var(--u) * 2.6)/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0; }
+  .title { font: 800 calc(var(--u) * 9)/1.02 var(--display); letter-spacing: -.02em; margin: 0; max-width: 16ch; }
+  .lead { font: 400 calc(var(--u) * 3.4)/1.35 var(--body); color: var(--muted); margin: 0; max-width: 34ch; }
+  .stack-gap { display: flex; flex-direction: column; gap: calc(var(--u) * 2.4); }
+  /* vertical layouts usually stack and scale type up a little */
+  .fmt-vertical .title { font-size: calc(var(--u) * 11); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <section class="scene" id="hook">
+    <div class="safe center stack-gap">
+      <h1 class="title" data-i18n="hook.title">The hook goes here</h1>
+    </div>
+  </section>
+
+  <section class="scene" id="reveal">
+    <div class="safe center stack-gap">
+      <p class="kicker" data-i18n="reveal.kicker">Introducing</p>
+      <h2 class="title" data-i18n="reveal.title">Product name</h2>
+      <p class="lead" data-i18n="reveal.lead">One line on what it does for whom.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="point">
+    <div class="safe center stack-gap">
+      <h2 class="title" data-i18n="point.title">The one thing to remember</h2>
+    </div>
+  </section>
+
+  <section class="scene" id="cta">
+    <div class="safe center stack-gap">
+      <h2 class="title" data-i18n="cta.title">Product name</h2>
+      <p class="lead" data-i18n="cta.lead">example.com</p>
+    </div>
+  </section>
+
+</div>
+<script src="timeline.js"></script>
+<script src="strings.js"></script>
+<script src="captions.js"></script>
+<script src="runtime/stage.js"></script>
+<script>
+  Stage.scene('hook', s => {
+    s.reveal('.title', { by: 'words', preset: 'rise', at: 0.15 });
+  });
+  Stage.scene('reveal', s => {
+    s.from('.kicker', { opacity: 0, y: 14 }, { at: 0.1, dur: 0.5 });
+    s.reveal('.title', { by: 'chars', preset: 'pop', at: 0.25, sfx: 'pop', sfxEvery: 99 });
+    s.from('.lead', { opacity: 0, y: 18 }, { at: 0.8, dur: 0.6 });
+  });
+  Stage.scene('point', s => {
+    s.reveal('.title', { by: 'lines', preset: 'mask', at: 0.1 });
+    s.camera({ scale: [1, 1.04] });
+  });
+  Stage.scene('cta', s => {
+    s.from('.title', { opacity: 0, scale: 0.92 }, { at: 0.1, dur: 0.7, ease: 'outBack' });
+    s.from('.lead', { opacity: 0 }, { at: 0.7, dur: 0.5 });
+  });
+  Stage.start();
+</script>
+</body>
+</html>
