@@ -4,7 +4,7 @@ description: Make a polished short video from just a prompt. Product launches (p
 license: MIT
 compatibility: Needs Python 3.9+ with numpy, ffmpeg, and a Chromium browser driven by Playwright (pip install playwright; Chrome or Edge also work). Optional scipy (better audio), kokoro-onnx (voiceover). Works offline once fonts and models are cached.
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # OneVideo

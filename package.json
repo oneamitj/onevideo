@@ -1,6 +1,6 @@
 {
   "name": "onevideo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agent skill that turns a prompt into a finished short video, rendered locally with free tools. One command installs it for Claude Code and Claude Desktop.",
   "keywords": [
     "claude",

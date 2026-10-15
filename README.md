@@ -20,6 +20,14 @@ The idea came from [latent-spaces/brag](https://github.com/latent-spaces/brag), 
 
 Needs Node 18+ (for the installer), Python 3.9+, FFmpeg, and a Chromium browser Playwright can drive.
 
+**Let Claude install it**
+
+Paste this into Claude Code (or the Claude Code tab in Desktop):
+
+> Install the onevideo skill: run `npx -y onevideo`, then `npx onevideo setup` and `npx onevideo doctor`, fix anything doctor reports (FFmpeg, browser), then tell me to restart.
+
+Claude Desktop chat can't run commands on your machine, so there use the zip below.
+
 **Claude Code**
 
 ```bash
