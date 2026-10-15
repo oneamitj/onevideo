@@ -1,0 +1,57 @@
+{
+  "manifest_version": "0.3",
+  "name": "onevideo",
+  "display_name": "OneVideo",
+  "version": "1.0.2",
+  "description": "Make a polished short video from a prompt. Renders on your computer with free tools: motion, original music, optional voiceover and captions.",
+  "long_description": "OneVideo turns a prompt into a finished MP4: product launches, app demos, explainers, ads and reels. Claude writes the story, animates it in a headless browser, composes an original soundtrack and renders it with FFmpeg. Everything runs on your computer. No paid services, no watermark. Needs Python 3.9+ and FFmpeg; Claude can install the Python parts for you.",
+  "author": { "name": "Amit Joshi", "email": "wannamit@gmail.com", "url": "https://github.com/oneamitj" },
+  "repository": { "type": "git", "url": "https://github.com/oneamitj/onevideo" },
+  "homepage": "https://github.com/oneamitj/onevideo",
+  "documentation": "https://github.com/oneamitj/onevideo#readme",
+  "support": "https://github.com/oneamitj/onevideo/issues",
+  "license": "MIT",
+  "keywords": ["video", "motion graphics", "ffmpeg", "skill"],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": { "ONEVIDEO_WORKSPACE": "${user_config.workspace}" }
+    }
+  },
+  "tools": [
+    { "name": "onevideo_guide", "description": "Read the onevideo workflow and reference docs" },
+    { "name": "onevideo_run", "description": "Run a onevideo script (render, music, voice, ...)" },
+    { "name": "onevideo_job", "description": "Check or wait for a long-running job" },
+    { "name": "onevideo_setup", "description": "Install Python packages and a browser" },
+    { "name": "onevideo_write_file", "description": "Write a project file in the workspace" },
+    { "name": "onevideo_read_file", "description": "Read a project file from the workspace" },
+    { "name": "onevideo_list_files", "description": "List workspace files" },
+    { "name": "onevideo_view_image", "description": "Look at a still or contact sheet" },
+    { "name": "onevideo_where", "description": "Show or open the workspace folder" }
+  ],
+  "prompts": [
+    {
+      "name": "make_video",
+      "description": "Make a short video",
+      "arguments": ["brief"],
+      "text": "Use the onevideo tools to make this video. Call onevideo_guide first and follow it.\n\nBrief: ${arguments.brief}"
+    }
+  ],
+  "user_config": {
+    "workspace": {
+      "type": "directory",
+      "title": "Videos folder",
+      "description": "Where OneVideo keeps projects and finished videos.",
+      "default": "${HOME}/onevideo",
+      "required": false
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=16.0.0" }
+  }
+}

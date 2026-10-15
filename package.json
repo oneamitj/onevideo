@@ -1,6 +1,6 @@
 {
   "name": "onevideo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Agent skill that turns a prompt into a finished short video, rendered locally with free tools. One command installs it for Claude Code and Claude Desktop.",
   "keywords": [
     "claude",
@@ -28,12 +28,14 @@
   },
   "files": [
     "bin",
+    "mcpb",
     "SKILL.md",
     "README.md",
     "LICENSE",
     "references",
     "scripts",
-    "assets"
+    "assets",
+    ".claude-plugin"
   ],
   "engines": {
     "node": ">=18"

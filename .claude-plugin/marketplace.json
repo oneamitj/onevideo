@@ -1,0 +1,13 @@
+{
+  "name": "onevideo",
+  "owner": { "name": "Amit Joshi", "email": "wannamit@gmail.com" },
+  "metadata": { "description": "OneVideo: prompt to short video, rendered locally." },
+  "plugins": [
+    {
+      "name": "onevideo",
+      "description": "Make a polished short video from a prompt. Rendered locally with free tools.",
+      "source": "./",
+      "category": "media"
+    }
+  ]
+}

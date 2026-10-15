@@ -18,7 +18,8 @@ Usage: npx onevideo [command] [options]
 
 Commands
   install      Install the skill into Claude Code (default)
-  desktop      Build onevideo.zip for Claude Desktop / claude.ai (Settings > Capabilities > Skills)
+  desktop      Build onevideo.mcpb for Claude Desktop and open it (one click: press Install).
+               --zip builds onevideo.zip for claude.ai / Settings > Capabilities > Skills instead
   uninstall    Remove the installed skill
   setup        pip-install the Python dependencies (playwright, numpy; --full adds scipy, kokoro-onnx)
   doctor       Check this machine (Python, FFmpeg, browser, fonts, voice)
@@ -27,7 +28,8 @@ Options
   --project    Install into ./.claude/skills instead of ~/.claude/skills
   --agents     Install into ~/.agents/skills (Codex, Gemini CLI, Cursor, ...)
   --all        Claude Code + Claude Desktop zip
-  --out <dir>  Where 'desktop' writes the zip (default: ~/Downloads)
+  --out <dir>  Where 'desktop' writes the file (default: ~/Downloads)
+  --no-open    With desktop: build only, do not open the file
   --full       With setup: include optional scipy and kokoro-onnx
   -h, --help   Show this help
 `;
@@ -73,11 +75,11 @@ function install(base, label) {
 const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
 const crc32 = (b) => { let c = 0xffffffff; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
 
-function buildZip(files, prefix) {
+function buildZip(files) {
   const locals = [], central = [];
   let offset = 0;
   for (const f of files) {
-    const name = Buffer.from(`${prefix}/${f.rel}`);
+    const name = Buffer.from(f.rel);
     const data = fs.readFileSync(f.abs);
     const comp = zlib.deflateRawSync(data, { level: 9 });
     const crc = crc32(data);
@@ -106,11 +108,31 @@ function buildZip(files, prefix) {
 function desktop() {
   const dir = path.resolve(val("--out") || path.join(os.homedir(), "Downloads"));
   fs.mkdirSync(dir, { recursive: true });
-  const zip = path.join(dir, `${NAME}.zip`);
-  fs.writeFileSync(zip, buildZip(listFiles(), NAME));
-  say(`  [ok] Claude Desktop: ${zip}`);
-  say("       Open Claude > Settings > Capabilities > Skills > Upload skill, pick that zip.");
-  say("       Code execution must be on. Same zip works on claude.ai.");
+  if (flag("--zip")) {
+    const zip = path.join(dir, `${NAME}.zip`);
+    fs.writeFileSync(zip, buildZip(listFiles().map((f) => ({ ...f, rel: `${NAME}/${f.rel}` }))));
+    say(`  [ok] Skill zip: ${zip}`);
+    say("       claude.ai or Claude Desktop > Settings > Capabilities > Skills > Upload skill. Code execution must be on.");
+    return;
+  }
+  const mcpbDir = path.join(ROOT, "mcpb");
+  const manifest = JSON.parse(fs.readFileSync(path.join(mcpbDir, "manifest.json"), "utf8"));
+  manifest.version = VERSION;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "onevideo-"));
+  fs.writeFileSync(path.join(tmp, "manifest.json"), JSON.stringify(manifest, null, 2));
+  const files = [
+    { abs: path.join(tmp, "manifest.json"), rel: "manifest.json", mode: 0o644 },
+    { abs: path.join(mcpbDir, "server", "index.js"), rel: "server/index.js", mode: 0o644 },
+    ...listFiles(),
+  ];
+  const out = path.join(dir, `${NAME}.mcpb`);
+  fs.writeFileSync(out, buildZip(files));
+  fs.rmSync(tmp, { recursive: true, force: true });
+  say(`  [ok] Claude Desktop extension: ${out}`);
+  if (flag("--no-open")) { say("       Double-click it, or drag it into Claude Desktop > Settings > Extensions, then press Install."); return; }
+  const opener = process.platform === "darwin" ? ["open", [out]] : process.platform === "win32" ? ["cmd", ["/c", "start", "", out]] : ["xdg-open", [out]];
+  const r = spawnSync(opener[0], opener[1], { stdio: "ignore" });
+  say(r.status === 0 ? "       Opened in Claude Desktop: press Install." : "       Double-click it, or drag it into Claude Desktop > Settings > Extensions, then press Install.");
 }
 
 function python() {
@@ -156,7 +178,7 @@ switch (cmd) {
   }
   case "setup": {
     const py = python();
-    const pkgs = ["playwright", "numpy", ...(flag("--full") ? ["scipy", "kokoro-onnx"] : [])];
+    const pkgs = ["playwright", "numpy", "imageio-ffmpeg", ...(flag("--full") ? ["scipy", "kokoro-onnx"] : [])];
     run(py, ["-m", "pip", "install", ...pkgs]);
     if (!flag("--no-browser")) run(py, ["-m", "playwright", "install", "chromium"]);
     break;

@@ -18,39 +18,47 @@ The idea came from [latent-spaces/brag](https://github.com/latent-spaces/brag), 
 
 ## Install
 
-Needs Node 18+ (for the installer), Python 3.9+, FFmpeg, and a Chromium browser Playwright can drive.
+Pick your app. Python 3.9+ is the only thing to have first; Claude can install the rest (a bundled FFmpeg and a browser) for you.
 
-**Let Claude install it**
+### Claude Desktop (one click)
 
-Paste this into Claude Code (or the Claude Code tab in Desktop):
+1. Download [`onevideo.mcpb`](https://github.com/oneamitj/onevideo/releases/latest/download/onevideo.mcpb) from the latest release.
+2. Double-click it (or drag it into Settings > Extensions) and press **Install**.
+3. Start a chat: "Make a 20 second launch video for ..." (or pick the *make_video* prompt). The first time, Claude runs the one-time setup itself.
 
-> Install the onevideo skill: run `npx -y onevideo`, then `npx onevideo setup` and `npx onevideo doctor`, fix anything doctor reports (FFmpeg, browser), then tell me to restart.
+Videos land in a folder called `onevideo` in your home folder (change it in the extension's settings). Claude can open it for you.
 
-Claude Desktop chat can't run commands on your machine, so there use the zip below.
+From a terminal instead: `npx onevideo desktop` builds the extension and opens it in Claude Desktop.
 
-**Claude Code**
+### Claude Code (plugin)
+
+```text
+/plugin marketplace add oneamitj/onevideo
+/plugin install onevideo@onevideo
+```
+
+Then `/onevideo:onevideo` or just ask for a video. The Plugins menu in Claude Code (terminal, VS Code, or the Code tab in Desktop) does the same by clicking.
+
+### Claude Code (npx)
 
 ```bash
-npx onevideo            # copies the skill to ~/.claude/skills/onevideo
-npx onevideo setup      # pip install playwright numpy + Chromium (add --full for scipy, kokoro-onnx voice)
+npx onevideo            # copies the skill to ~/.claude/skills/onevideo, gives you /onevideo
+npx onevideo setup      # pip install playwright numpy ffmpeg + Chromium (--full adds scipy, kokoro-onnx voice)
 npx onevideo doctor     # check Python, FFmpeg, browser, fonts, voice
 ```
 
-Restart Claude Code and ask for a video. Use `--project` to install into `./.claude/skills` instead.
+Restart Claude Code and ask for a video. `--project` installs into `./.claude/skills` instead.
 
-**Claude Desktop (and claude.ai)**
+You can also paste this into Claude Code running **on your own machine** (terminal or VS Code, not a cloud or sandboxed session):
 
-```bash
-npx onevideo desktop    # writes ~/Downloads/onevideo.zip
-```
+> Install the onevideo skill: run `npx -y onevideo`, then `npx onevideo setup` and `npx onevideo doctor`, fix anything doctor reports, then tell me to restart.
 
-Then Settings > Capabilities > Skills > Upload skill, pick the zip. Code execution has to be on. The Claude Code tab inside Desktop uses the Claude Code install above.
+### claude.ai and other agents
 
-**Other agents** (Codex, Gemini CLI, Cursor and more): `npx onevideo --agents` installs to `~/.agents/skills`. `npx onevideo --all` does Claude Code plus the Desktop zip in one go.
+- claude.ai (web): `npx onevideo desktop --zip`, then Settings > Capabilities > Skills > Upload skill. Code execution has to be on.
+- Codex, Gemini CLI, Cursor and more: `npx onevideo --agents`, or `npx skills add oneamitj/onevideo`.
 
-Or straight from GitHub: `npx skills add oneamitj/onevideo`.
-
-Remove with `npx onevideo uninstall`.
+Remove with `npx onevideo uninstall` (npx install) or from the Extensions / Plugins menu.
 
 ## Try it
 
